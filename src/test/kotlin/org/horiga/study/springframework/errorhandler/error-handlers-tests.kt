@@ -60,7 +60,7 @@ class ErrorHandlersTest {
     }
 
     @Test
-    fun `RequestBody validate non-nullable failed`() {
+    fun `RequestBody validate non-nullable failed - Kotlin`() {
         mockMvc.perform(
             post("/api/books")
                 .content(
