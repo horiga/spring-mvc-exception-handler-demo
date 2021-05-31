@@ -163,6 +163,7 @@ class ValidationsRestController {
     }
 
     @NoArgs
+    @Validated
     data class RequestMessage(
         @field:NotBlank
         @field:NotNull
@@ -186,7 +187,7 @@ class ValidationsRestController {
         // NonNull with default value
         val num2: Int = 10,
 
-        @field:Valid
+        //@field:Valid
         @field:NotEmpty
         @field:NotNull
         @field:Size(max = 10)

@@ -141,5 +141,19 @@ curl http://localhost:8080/api/validations/u12345\?tags\=1,22
 -> {"status":400,"error_message":"must match \"^[0-9a-zA-Z]{2,10}\"","error_type":"ConstraintViolationException"}
 ```
 
-`RequestMessage#tags` のところ、Jackson で flat にするのどうやるか忘れた...
+Bean validation 2.0 から利用できる container element validation(`List<@NotBlank String>`)をKotlin で有効にするには build option が必要なようだった。[stackoverflow](https://stackoverflow.com/questions/51085138/kotlin-data-class-and-bean-validation-with-container-element-constraints) に記載があった
+
+```kotlin
+// Kotlin DSL
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xemit-jvm-type-annotations")
+        jvmTarget = "11"
+    }
+}
+```
+
+
+
+
 
