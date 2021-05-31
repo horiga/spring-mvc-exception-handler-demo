@@ -1,8 +1,11 @@
 package org.horiga.study.springframework.errorhandler.api
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonUnwrapped
 import org.apache.commons.lang3.RandomStringUtils
 import org.hibernate.validator.constraints.ISBN
 import org.horiga.study.springframework.errorhandler.From
+import org.horiga.study.springframework.errorhandler.NoArgs
 import org.horiga.study.springframework.errorhandler.OrderPriority
 import org.slf4j.LoggerFactory
 import org.springframework.validation.annotation.Validated
@@ -13,14 +16,20 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.concurrent.Callable
 import javax.validation.Valid
+import javax.validation.constraints.Max
 import javax.validation.constraints.Min
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import kotlin.random.Random
 
 data class Book(
     @field:Size(max = 13)
-    // @field:ISBN
+    //@field:ISBN
     val isbn: String,
     @field:Size(min = 1, max = 50)
     val title: String,
@@ -105,4 +114,83 @@ class GreetingsRestController {
     ): Int {
         return identifier
     }
+}
+
+@RestController
+@RequestMapping("api/validations")
+@Validated
+class ValidationsRestController {
+
+    companion object {
+        val log = LoggerFactory.getLogger(ValidationsRestController::class.java)!!
+    }
+
+    @GetMapping("{id}")
+    fun get(
+        @Valid
+        @Pattern(regexp = "u[0-9]{5}", message = "This ID is invalid.")
+        @PathVariable("id") id: String?,
+        @Valid
+        @Min(0)
+        @RequestParam(value = "page", required = false, defaultValue = "0") page: Int,
+        @Valid
+        @Max(50)
+        @Min(1)
+        @RequestParam(value = "count", required = false, defaultValue = "10") count: Int,
+        @Valid
+        @RequestParam(value = "tags", required = false, defaultValue = "")
+        // HACK(?): Want to use `tags: List<@Valid @Pattern(regexp="...") String>`, refs: https://stackoverflow.com/questions/22233512/adding-notnull-or-pattern-constraints-on-liststring
+        tags: List<Tag>
+    ) = Callable {
+        mapOf(
+            "id" to id,
+            "count" to count,
+            "page" to page,
+            "tags" to tags.map { it.tag }
+        )
+    }
+
+    data class Tag(
+        @field:Pattern(regexp = "^[0-9a-zA-Z]{2,10}")
+        val tag: String
+    )
+
+    @PostMapping
+    fun post(
+        @Valid @RequestBody message: RequestMessage
+    ) = Callable {
+        message
+    }
+
+    @NoArgs
+    data class RequestMessage(
+        @field:NotBlank
+        @field:NotNull
+        @field:Size(max = 100)
+        val name: String,
+
+        // Nullable with @NotNull, @NotBlank
+        @field:NotBlank
+        @field:NotNull
+        @field:Size(max = 200)
+        val nickname: String?,
+
+        @field:NotBlank
+        @field:Size(max = 300)
+        val message: String?,
+
+        @field:NotNull
+        @field:Max(1000)
+        val num1: Int?,
+
+        // NonNull with default value
+        val num2: Int = 10,
+
+        @field:Valid
+        @field:NotEmpty
+        @field:NotNull
+        @field:Size(max = 10)
+        val tags: List<@Pattern(regexp = "^[0-9a-zA-Z]{2,10}") String>? = mutableListOf()
+        //val tags: Collection<Tag>? = mutableListOf()
+    )
 }
