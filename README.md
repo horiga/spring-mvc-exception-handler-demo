@@ -142,7 +142,8 @@ curl http://localhost:8080/api/validations/u12345\?tags\=1,22
 ```
 
 
-**結局Kotlinの場合は、以下のオプションが必要になることがわかった
+**結局Kotlinの場合は、以下のオプションが必要になることがわかった**
+
 Bean validation 2.0 から利用できる container element validation(`List<@NotBlank String>`)をKotlin で有効にするには build option が必要なようだった。[stackoverflow](https://stackoverflow.com/questions/51085138/kotlin-data-class-and-bean-validation-with-container-element-constraints) に記載があった
 
 ```kotlin
