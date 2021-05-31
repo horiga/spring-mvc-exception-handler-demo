@@ -1,3 +1,4 @@
+
 package org.horiga.study.springframework.errorhandler
 
 import javax.validation.Constraint
@@ -41,8 +42,6 @@ class OrderPriorityValidator : ConstraintValidator<OrderPriority, Int> {
         orderPriorityRange = OrderPriorityRange(constraintAnnotation.min, constraintAnnotation.max)
     }
 
-    override fun isValid(value: Int?, context: ConstraintValidatorContext?): Boolean {
-        val valid = value?.let { it in orderPriorityRange.min..orderPriorityRange.max } ?: true
-        return valid
-    }
+    override fun isValid(value: Int?, context: ConstraintValidatorContext?) =
+            value?.let { it in orderPriorityRange.min..orderPriorityRange.max } ?: true
 }
