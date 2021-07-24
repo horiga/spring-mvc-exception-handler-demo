@@ -1,6 +1,7 @@
 
 package org.horiga.study.springframework.errorhandler
 
+import org.slf4j.LoggerFactory
 import javax.validation.Constraint
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext

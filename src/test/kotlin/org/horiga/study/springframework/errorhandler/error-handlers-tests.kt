@@ -32,6 +32,8 @@ class ErrorHandlersTest {
             .andExpect(resultMatcher(ConstraintViolationException::class))
     }
 
+
+
     @Test
     fun `RequestParam type mismatched failed`() {
         mockMvc.perform(get("/api/books").param("price", "evil"))
@@ -61,6 +63,7 @@ class ErrorHandlersTest {
 
     @Test
     fun `RequestBody validate non-nullable failed - Kotlin`() {
+
         mockMvc.perform(
             post("/api/books")
                 .content(

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConversionException
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.validation.BindException
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.multipart.support.MissingServletRequestPartException
+import org.springframework.web.server.ResponseStatusException
 import javax.servlet.http.HttpServletRequest
 import javax.validation.ConstraintViolationException
 
@@ -104,6 +106,12 @@ class DemoRestControllerAdvice {
     ): ErrorResponse {
         return errorResponse(e, request, HttpStatus.NOT_FOUND, e.message)
     }
+
+    @ExceptionHandler(ResponseStatusException::class)
+    fun handleResponseStatusException(
+        e: ResponseStatusException,
+        request: HttpServletRequest
+    ) = ResponseEntity(errorResponse(e, request, e.status, e.message), e.status)
 
     @ExceptionHandler(Exception::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
